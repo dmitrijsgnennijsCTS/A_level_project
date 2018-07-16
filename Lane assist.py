@@ -20,7 +20,7 @@ def make_480p():
     video.set(4, 480)
 
 
-make_720p()
+make_1080p()
 
 
 while True:
