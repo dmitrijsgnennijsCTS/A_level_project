@@ -17,7 +17,10 @@ while True:
 
     mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
     res = cv2.bitwise_and(ROI, ROI, mask=mask)
-    cv2.imshow("hsv", res)
+
+    blur = cv2.medianBlur(res, 3)
+
+    cv2.imshow("blur3", blur)
     '#Close when any key pressed(milliseconds)'
     key = cv2.waitKey(25)
 
