@@ -1,43 +1,28 @@
 import cv2
 import numpy as np
 
-
 '#Create an object. zero for external camera'
-video = cv2.VideoCapture(0)
-a = 0
-
-
-def make_customres():
-    video.set(3, 1920)
-    video.set(4, 1080)
+video = cv2.VideoCapture("test video.mp4")
 
 
 while True:
-    a = a+1
     '#Create a frame object'
     check, frame = video.read()
+    ROI = frame[470:635, 350:900] #region of interest
+    cv2.imshow("Region of interest", ROI)
+    hsv = cv2.cvtColor(ROI, cv2.COLOR_BGR2HSV)
+    #hue sat value
+    lower_yellow = np.array([0, 0, 100])
+    upper_yellow = np.array([180, 130, 255])
 
-    #print(check)
-    #print(frame)
-
-    '#convert to grey scale'
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    edges = cv2.Canny(gray, 75, 150) #find lines
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 30, maxLineGap=250)
-    print(lines)
-    for line in lines:
-        x1, y1, x2, y2 = line[0]
-        cv2.line(frame, (x1, y1), (x2, y2), (0, 255, 0), 3) #draw lines on the frame
-    '#show the frame'
-    cv2.imshow("Webcam1", edges)
-    cv2.imshow("Webcam2", frame)
-
+    mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+    res = cv2.bitwise_and(ROI, ROI, mask=mask)
+    cv2.imshow("hsv", res)
     '#Close when any key pressed(milliseconds)'
-    key = cv2.waitKey(1)
+    key = cv2.waitKey(25)
 
     if key == ord('q'):
         break
 
-print(a)
 video.release()
 cv2.destroyAllWindows()
