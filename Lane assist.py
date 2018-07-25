@@ -9,6 +9,10 @@ video_input = cv2.VideoCapture("test video.mp4")
 # Blur pixel size
 blur_size = 3
 
+# Canny Edge thresholds 2:3
+low_threshold = 50
+high_threshold = 150
+
 # Region of interest array with each [] representing x and y
 points = np.array([[375, 0], [375, 0], [750, 135], [0, 135]], dtype=np.int32)
 # Or
@@ -32,7 +36,7 @@ vertices = np.array([[ \
 2. Filter colours     :)
 3. grayscale          :)
 4. Blur               :)
-5. Canny edge         :(
+5. Canny edge         :)
 6. Hough lines        :(
 7. draw lines on the original image     :(
 """
@@ -85,6 +89,10 @@ def gaussian_blur(image, blur_size):
     return cv2.GaussianBlur(image, (blur_size, blur_size), 0)
 
 
+def canny(img, low_threshold, high_threshold):
+    return cv2.Canny(img, low_threshold, high_threshold)
+
+
 # Main code
 while True:
     check, frame = video_input.read()
@@ -93,6 +101,7 @@ while True:
     cv2.imshow("Filtered", filter_colors(region_of_interest(ROI, points)))
     cv2.imshow("Grayscale", grayscale(filter_colors(region_of_interest(ROI, points))))
     cv2.imshow("Blurred", gaussian_blur(grayscale(filter_colors(region_of_interest(ROI, points))), blur_size))
+    cv2.imshow("Canny edge", canny(gaussian_blur(grayscale(filter_colors(region_of_interest(ROI, points))), blur_size), low_threshold, high_threshold))
     cv2.imshow("orig", frame)
 
     key = cv2.waitKey(25)
