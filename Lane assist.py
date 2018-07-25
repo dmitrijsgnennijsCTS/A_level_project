@@ -17,6 +17,7 @@ def grayscale(frame):
 
 
 def region_of_interest(frame, points):
+    # The initial region if interest has to be sent as a frame
     # defining a blank mask to start with
     mask = np.zeros_like(frame)
 
@@ -30,11 +31,35 @@ def region_of_interest(frame, points):
     return masked_image
 
 
+def filter_colors(image):
+    # Filter all the colours and leave colours only in the region of white and yellow
+    # Filter white pixels
+    white_threshold = 150
+    lower_white = np.array([white_threshold, white_threshold, white_threshold])
+    upper_white = np.array([255, 255, 255])
+    white_mask = cv2.inRange(image, lower_white, upper_white)
+    white_image = cv2.bitwise_and(image, image, mask=white_mask)
+
+    # Filter yellow pixels
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    lower_yellow = np.array([90, 100, 100])
+    upper_yellow = np.array([110, 255, 255])
+    yellow_mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
+    yellow_image = cv2.bitwise_and(image, image, mask=yellow_mask)
+
+    # Combine the two above images
+    image2 = cv2.addWeighted(white_image, 1., yellow_image, 1., 0.)
+
+    return image2
+
+
 # Main code
 while True:
     check, frame = video_input.read()
     ROI = frame[500:635, 250:1000]  # region of interest initial cropped image
-    cv2.imshow("Grayscale", region_of_interest(ROI, points))
+    cv2.imshow("Region of interest", region_of_interest(ROI, points))
+    cv2.imshow("Filtered", filter_colors(region_of_interest(ROI, points)))
+    cv2.imshow("Grayscale", grayscale(region_of_interest(ROI, points)))
     cv2.imshow("orig", frame)
 
     key = cv2.waitKey(25)
