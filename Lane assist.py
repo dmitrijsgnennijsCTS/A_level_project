@@ -31,7 +31,7 @@ vertices = np.array([[ \
 1. Region of interest :)
 2. Filter colours     :)
 3. grayscale          :)
-4. Blur               :(
+4. Blur               :)
 5. Canny edge         :(
 6. Hough lines        :(
 7. draw lines on the original image     :(
